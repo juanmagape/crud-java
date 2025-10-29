@@ -20,8 +20,7 @@ public class Crud {
             System.out.println("1: Crear tarea");
             System.out.println("2: Mostrar las tareas");
             System.out.println("3: Editar tarea");
-            System.out.println("4: Eliminar tarea");
-            System.out.println("5: Salir");
+            System.out.println("4: Salir");
             int opcion = print.nextInt();
             print.nextLine();
 
@@ -31,6 +30,7 @@ public class Crud {
                     nomTar = print.nextLine();
 
                     System.out.println("En que estado está?");
+                    System.out.println("1: " + estado3 + ", 2: " + estado2 + ", 3: " + estado1);
                     int estTar = print.nextInt();
 
                     if (estTar == 1) {
@@ -74,13 +74,22 @@ public class Crud {
                                 t.setNombre(nombreCam);
 
                                 System.out.println("Tarea modificada");
+                            } else if (modificar == 2) {
+                                System.out.println("Introduce el nuevo estado de la tarea");
+                                System.out.println("1: " + estado3 + ", 2: " + estado2 + ", 3: " + estado1);
+                                int estadoNuevo = print.nextInt();
+
+                                switch (estadoNuevo) {
+                                    case 1: t.setEstado("Por comenzar"); break;
+                                    case 2: t.setEstado("En proceso"); break;
+                                    case 3: t.setEstado("Finalizado"); break;
+
+                                }
+
                             }
                         }
                     break;
                 case 4:
-                    System.out.println("Has elegido la opción 4");
-                    break;
-                case 5:
                     salir = true;
                     System.out.println("Saleindo del programa...");
                     break;
