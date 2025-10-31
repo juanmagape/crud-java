@@ -21,5 +21,8 @@ public class Tarea {
         public String toString() {
             return nombre + " " + estado;
         }
-    }
+
+        public String getNombre() { return nombre; }
+        public String getEstado() { return estado; }
+}
 

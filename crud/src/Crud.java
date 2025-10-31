@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
+import java.io.*;
 
 public class Crud {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Scanner print = new Scanner(System.in);
         boolean salir = false;
@@ -13,6 +13,8 @@ public class Crud {
         String estado2 = "En proceso";
         String estado3 = "Por comenzar";
         String nomTar = "";
+        File archivo = new File("tarea.csv");
+        int i = 0;
 
         while (!salir) {
 
@@ -33,36 +35,64 @@ public class Crud {
                     System.out.println("1: " + estado3 + ", 2: " + estado2 + ", 3: " + estado1);
                     int estTar = print.nextInt();
 
+                    String estadoSeleccionado;
                     if (estTar == 1) {
-                        String addTareas = nomTar + " con el estado: Por comenzar"+ "\n";
-                        tarea.add(new Tarea(nomTar, estado3));
-                        System.out.println(addTareas);
+                        estadoSeleccionado = estado3;
                     } else if (estTar == 2) {
-                        String addTareas = nomTar + " con el estado: En progreso" + "\n";
-                        tarea.add(new Tarea(nomTar, estado2));
-                        System.out.println(addTareas);
-
+                        estadoSeleccionado = estado2;
                     } else {
-                        String addTareas = nomTar + " con el estado: Finalizado" + "\n";
-                        tarea.add(new Tarea(nomTar, estado1));
-                        System.out.println(addTareas);
+                        estadoSeleccionado = estado1;
                     }
+
+                    tarea.add(new Tarea(nomTar, estadoSeleccionado));
+
+                    FileWriter fw = new FileWriter(archivo, true);
+                    PrintWriter pw = new PrintWriter(fw);
+                    pw.println(nomTar + "," + estadoSeleccionado);
+                    pw.close();
+                    System.out.println("Tarea guardada");
 
                     break;
                 case 2:
+                    i = 0;
                     System.out.println("Mostrando las tareas actuales...");
-                    int i = 0;
-                    System.out.println(tarea + "\n");
+
+                    Scanner lector = new Scanner(archivo);
+
+                    while (lector.hasNextLine()) {
+                        String linea = lector.nextLine();
+                        System.out.println(i + ", " + linea);
+                        i++;
+                    }
+
+                    lector.close();
+
                     break;
+
                 case 3:
+                    i = 0;
+                    Scanner lectorEdit = new Scanner(archivo);
+                    ArrayList<Tarea> listaCSV = new ArrayList<>();
+
                         System.out.println("Que tarea quieres editar? (Empiza por 0)");
-                        System.out.println(tarea);
+
+                        while (lectorEdit.hasNextLine()) {
+                            String linea = lectorEdit.nextLine();
+                            String[] partes = linea.split(",", 2); // separa nombre y estado
+                            if (partes.length == 2) {
+                                listaCSV.add(new Tarea(partes[0], partes[1]));
+                            }
+                            System.out.println(i + ": " + linea);
+                            i++;
+                        }
+                        lectorEdit.close();
+
                         int tareaEscogida = print.nextInt();
                         print.nextLine();
 
-                        if (tareaEscogida == 0) {
-                            Tarea t = tarea.get(tareaEscogida);
-                            System.out.println(tarea.get(0));
+                        if (tareaEscogida >= 0 && tareaEscogida < listaCSV.size()) {
+                            Tarea tareaEditar = listaCSV.get(tareaEscogida);
+                            System.out.println(tareaEditar);
                             System.out.println("Que quieres modificar de la tarea? (1: Nombre / 2: Estado)");
                             int modificar = print.nextInt();
                             print.nextLine();
@@ -71,7 +101,7 @@ public class Crud {
                             if (modificar == 1) {
                                 System.out.println("Introduce el nuevo nombre de la tarea");
                                 String nombreCam = print.nextLine();
-                                t.setNombre(nombreCam);
+                                tareaEditar.setNombre(nombreCam);
 
                                 System.out.println("Tarea modificada");
                             } else if (modificar == 2) {
@@ -80,14 +110,22 @@ public class Crud {
                                 int estadoNuevo = print.nextInt();
 
                                 switch (estadoNuevo) {
-                                    case 1: t.setEstado("Por comenzar"); break;
-                                    case 2: t.setEstado("En proceso"); break;
-                                    case 3: t.setEstado("Finalizado"); break;
+                                    case 1: tareaEditar.setEstado("Por comenzar"); break;
+                                    case 2: tareaEditar.setEstado("En proceso"); break;
+                                    case 3: tareaEditar.setEstado("Finalizado"); break;
 
                                 }
-
                             }
                         }
+
+                        FileWriter fwEdit = new FileWriter(archivo, false);
+                        PrintWriter pwEdit = new PrintWriter(fwEdit);
+                        for (Tarea t : listaCSV) {
+                            pwEdit.println(t.getNombre() + "," + t.getEstado());
+                        }
+
+                        pwEdit.close();
+                        fwEdit.close();
                     break;
                 case 4:
                     salir = true;
