@@ -14,6 +14,10 @@ public class Crud {
         String estado3 = "Por comenzar";
         String nomTar = "";
         File archivo = new File("tarea.csv");
+
+        if (!archivo.exists()) {
+            archivo.createNewFile();
+        }
         int i = 0;
 
         while (!salir) {
